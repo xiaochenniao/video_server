@@ -5,7 +5,8 @@ import (
 	"log"
 	"time"
 	"video_server/api/defs"
-	"video_server_1_5/api/utils"
+	"video_server/api/ntils"
+	_"video_server/api/ntils"
 )
 //创建用户
 func AddUserCredential(loginName string, pwd string) error {
@@ -59,7 +60,7 @@ func DeleteUser(loginName string, pwd string) error {
 //添加视频
 func AddNewVideo(aid int, name string) (*defs.VideoInfo, error) {
 	//创建 uuid
-	vid, err := utils.NewUUID()
+	vid, err := ntils.NewUUID()
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +81,80 @@ func AddNewVideo(aid int, name string) (*defs.VideoInfo, error) {
 }
 //获取视频
 func GetVideoInfo(vid string) (*defs.VideoInfo, error){
-	stmOut, err := dbConn.Prepare("select")
+	stmOut, err := dbConn.Prepare("select * from video_info where id=?")
 
+	var aid int
+	var dct string
+	var name string
+
+	err = stmOut.QueryRow(vid).Scan(&aid, &name, &dct)
+	//此处返回如果没数据 也是有返回值的
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
+	defer stmOut.Close()
+
+	res := &defs.VideoInfo{Id:vid, AuthorId:aid, Name:name, DisplayCtime:dct}
+
+	return res, nil
+}
+//删除视频
+func DeleteVideoInfo(vid string) error {
+	stmtDel, err := dbConn.Prepare("DELETE from video_info WHERE id=?")
+	if err != nil {
+		return  err
+	}
+	_, err = stmtDel.Exec(vid)
+	if err != nil {
+		return err
+	}
+	defer stmtDel.Close()
+	return nil
+}
+//添加评论
+func AddNewComments(vid string, aid int, content string) error {
+	id, err := ntils.NewUUID()
+	if err != nil {
+		return err
+	}
+	stmtIns, err := dbConn.Prepare(`INSERT INTO comments (id, video_id, author_id, content) values (?, ?, ?, ?)`)
+	if err != nil {
+		return err
+	}
+	
+	_, err = stmtIns.Exec(id, vid, aid, content)
+	if err != nil {
+		return  err
+	}
+	defer stmtIns.Close()
+	return nil
+}
+//评论列表
+func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
+	stmtOut, err := dbConn.Prepare(`SELECT comments.id, users.Login_name, comments.content FROM comments
+		INNER JOIN users ON comments.author_id = users.id
+		WHERE comments.video_id = ? AND comments.time > FROM_UNIXTIME(?) AND comments.time <= FROM_UNIXTIME(?)`)
+
+	var res []*defs.Comment
+
+	rows, err := stmtOut.Query(vid, from, to)
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		var id, name, content string
+		if err := rows.Scan(&id, &name, &content); err != nil {
+			return res, err
+		}
+		c := &defs.Comment{Id:id, VideoId:vid, Author:name, Content:content}
+		res = append(res, c)
+	}
+	defer stmtOut.Close()
+	return res, nil
 }
