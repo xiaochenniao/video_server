@@ -154,7 +154,7 @@ func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
 			return res, err
 		}
 		c := &defs.Comment{Id:id, VideoId:vid, Author:name, Content:content}
-		res = append(res, c)
+	res = append(res, c)
 	}
 	defer stmtOut.Close()
 	return res, nil
