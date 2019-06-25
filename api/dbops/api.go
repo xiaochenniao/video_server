@@ -6,8 +6,8 @@ import (
 	"time"
 	"video_server/api/defs"
 	"video_server/api/ntils"
-	_"video_server/api/ntils"
 )
+var tempvid string
 //创建用户
 func AddUserCredential(loginName string, pwd string) error {
 	stmtIns, err := dbConn.Prepare("insert into users (login_name, pwd) values (?, ?)")
@@ -67,7 +67,8 @@ func AddNewVideo(aid int, name string) (*defs.VideoInfo, error) {
 	t := time.Now()
 	ctime := t.Format("Jan 02 2006, 15:04:05")
 
-	stmtIns, err := dbConn.Prepare(`INSERT INTO video_info (id, author_id, name, display_ctime) values (?, ?, ?, ?)`)
+	stmtIns, err := dbConn.Prepare(`INSERT INTO video_info 
+		(id, author_id, name, display_ctime) VALUES(?, ?, ?, ?)`)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +82,7 @@ func AddNewVideo(aid int, name string) (*defs.VideoInfo, error) {
 }
 //获取视频
 func GetVideoInfo(vid string) (*defs.VideoInfo, error){
-	stmOut, err := dbConn.Prepare("select * from video_info where id=?")
+	stmOut, err := dbConn.Prepare("select author_id, name, display_ctime from video_info where id=?")
 
 	var aid int
 	var dct string
