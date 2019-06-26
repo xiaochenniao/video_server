@@ -1,13 +1,16 @@
 package defs
-
+//reqeusts
 type UserCredential struct {
 	Username string `json:"user_name"`
 	Pwd string `json:"pwd"`
 }
-
+//response
+type SignedUp struct {
+	Success bool `json:"success"`
+	SessionId string `json:"session_id"`
+}
 
 //数据模型
-
 type VideoInfo struct {
 	Id string
 	AuthorId int

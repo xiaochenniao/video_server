@@ -47,7 +47,7 @@ func GenerateNewSessionId(un string) string {
 	return id
 }
 
-func IsSessionEx(sid string) (string, bool) {
+func IsSessionExpired(sid string) (string, bool) {
 	ss, ok := sessionMap.Load(sid)
 	if ok {
 		ct := nowInMilli()

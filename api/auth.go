@@ -1,1 +1,33 @@
 package main
+
+import (
+	"net/http"
+	"video_server/api/defs"
+	"video_server/api/session"
+)
+
+var HEADER_FIELD_SESSION = "X-Session-Id"
+var HEADER_FIELD_UNAME = "X_User_Name"
+
+//验证用户session
+func validateUserSession(r *http.Request) bool {
+	sid := r.Header.Get(HEADER_FIELD_SESSION)
+	if len(sid) == 0 {
+		return false
+	}
+	uname, ok := session.IsSessionExpired(sid)
+	if ok {
+		return false
+	}
+	r.Header.Add(HEADER_FIELD_UNAME, uname)
+	return true
+}
+//
+func validateUser(w http.ResponseWriter, r *http.Request) bool {
+	uname := r.Header.Get(HEADER_FIELD_UNAME)
+	if len(uname) == 0 {
+		sendErroeResponse(w, defs.EeeorNotAuthUser)
+		return false
+	}
+	return true
+}
