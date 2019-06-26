@@ -26,7 +26,7 @@ func validateUserSession(r *http.Request) bool {
 func validateUser(w http.ResponseWriter, r *http.Request) bool {
 	uname := r.Header.Get(HEADER_FIELD_UNAME)
 	if len(uname) == 0 {
-		sendErroeResponse(w, defs.EeeorNotAuthUser)
+		sendErroeResponse(w, defs.ErrorNotAuthUser)
 		return false
 	}
 	return true

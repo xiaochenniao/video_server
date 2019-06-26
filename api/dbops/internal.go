@@ -1,6 +1,7 @@
 package dbops
 
 import (
+	"database/sql"
 	"log"
 	"strconv"
 	"sync"
@@ -38,7 +39,7 @@ func RetrieveSession(sid string) (*defs.SimpleSession, error) {
 	var ttl string
 	var uname string
 	stmtOut.QueryRow(sid).Scan(&ttl, &uname)
-	if err != nil && err != sql.ErrNoRows{
+	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 

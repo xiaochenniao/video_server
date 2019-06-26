@@ -11,6 +11,8 @@ type ErrorResponse struct {
 }
 
 var (
-	EeeorRequestBodyParseFailed = ErrorResponse{HttpSc:400, Error:Err{Error: "Request body is not correct", ErrorCode:"001"}}
-	EeeorNotAuthUser = ErrorResponse{HttpSc:401, Error:Err{Error: "User authentication failed", ErrorCode:"002"}}
+	ErrorRequestBodyParseFailed = ErrorResponse{HttpSc:400, Error:Err{Error: "Request body is not correct", ErrorCode:"001"}}
+	ErrorNotAuthUser = ErrorResponse{HttpSc:401, Error:Err{Error: "User authentication failed", ErrorCode:"002"}}
+	ErrorBDError = ErrorResponse{HttpSc:500, Error:Err{Error:"DB ops failed", ErrorCode:"003"}}
+	ErrorInternalFaults = ErrorResponse{HttpSc:500, Error:Err{Error:"Internal service error", ErrorCode:"004"}}
 )

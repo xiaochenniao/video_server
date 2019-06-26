@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
@@ -29,11 +30,20 @@ func RegisterHandlers() *httprouter.Router {
 
 	router.POST("/user/:user_name", Login)
 
+	router.GET("/hhh", Login)
+
 	return router
 }
 
+
+func IndexHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "hello world")
+}
+
+
 func main()  {
-	r := RegisterHandlers()
-	mh := NewMiddleWareHandler(r)
-	http.ListenAndServe(":8000", mh)
+	//r := RegisterHandlers()
+	//mh := NewMiddleWareHandler(r)
+	http.HandleFunc("/", IndexHandler)
+	http.ListenAndServe(":8000", nil)
 }

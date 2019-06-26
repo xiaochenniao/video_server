@@ -13,7 +13,7 @@ var (
 
 func init() {
 	//root:123456@tcp(localhost:3306)/video?charset=utf8 这一段线上可以不用这么多
-	dbConn, err = sql.Open("mysql", "root:123456@tcp(localhost:3306)/video?charset=utf8")
+	dbConn, err = sql.Open("mysql", "root:root@tcp(100.1.1.9:3306)/video?charset=utf8")
 	if err != nil {
 		panic(err.Error())
 	}
